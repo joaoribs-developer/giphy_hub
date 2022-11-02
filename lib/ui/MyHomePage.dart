@@ -1,8 +1,8 @@
-import 'dart:ffi';
 import 'dart:ui';
-
 import 'package:flutter/material.dart';
 import 'package:giphy_hub/Network/HttpBluider.dart';
+import 'fullScreenGif.dart';
+import 'package:share_plus/share_plus.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({Key? key}) : super(key: key);
@@ -13,7 +13,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   String? parametroQuery;
-  int ofSet = 25;
+  int ofSet = 19;
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -123,23 +123,25 @@ class _MyHomePageState extends State<MyHomePage> {
           padding: const EdgeInsets.all(8),
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
               crossAxisCount: 2, crossAxisSpacing: 8.0, mainAxisSpacing: 8.0),
-          itemCount: list.length+1,
+          itemCount: (list.length+1),
           itemBuilder: (context, index) {
-            if(index != list.length) {
+            if(index < list.length) {
               return GestureDetector(
+                onLongPress: (){
+                  Share.share(snapshot?.data["data"][index]["images"]["fixed_height"]["url"]);
+                },
+                onTap: (){
+                  Navigator.push(context, MaterialPageRoute(builder: (context) => GifPage( snapshot?.data["data"][index])));
+                },
               child: Image.network(
-                snapshot?.data["data"][index]["images"]["fixed_height"]["url"] ??"",
+                snapshot?.data["data"][index]["images"]["fixed_height"]["url"] ?? "",
                 fit: BoxFit.cover,),
             );
             }else{
               return IconButton(
                   onPressed: (){
                 setState((){
-                  if((list.length+1)%2 == 0) {
-                    ofSet+=19;
-                  }else {
-                    ofSet+=21;
-                  }
+                  ofSet+= 20;
                 });
               }, icon:const Icon(Icons.add, size: 80, color: Colors.white,));
             }
